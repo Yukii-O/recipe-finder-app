@@ -6,6 +6,8 @@ import { AppService } from './app.service.js';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './config/env.schema.js';
 
+import { PrismaModule } from './prisma/prisma.module.js';
+
 //export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
@@ -21,6 +23,7 @@ import { validateEnv } from './config/env.schema.js';
       isGlobal: true,
       validate: validateEnv,
     }),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
