@@ -22,7 +22,7 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body(new ZodValidationPipe(registerSchema)) body: RegisterDto,
+    @Body(new ZodValidationPipe(registerSchema)) body: RegisterDto, //nota --> como nao fiz dto tipado, so zod, virando type, nao class; caso eu nao passe o constructor pro pipe, passando só 'ZodValidationPipe', o js nao vai ler e dará erro
   ) {
     return await this.authService.register(body.email, body.senha);
   }
