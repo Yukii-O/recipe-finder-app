@@ -9,6 +9,7 @@ import { validateEnv } from './config/env.schema.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { RecipesModule } from './recipes/recipes.module.js';
 
 //export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -28,6 +29,7 @@ import { AuthModule } from './auth/auth.module.js';
     PrismaModule,
     UsersModule,
     AuthModule,
+    RecipesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
