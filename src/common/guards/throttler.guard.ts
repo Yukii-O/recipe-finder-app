@@ -1,9 +1,13 @@
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { createHash } from 'crypto';
 
 @Injectable()
-export class DoubleLayerThrottlerGuard extends ThrottlerGuard {
+export class ContextThrottlerGuard extends ThrottlerGuard {
   protected generateKey(
     context: ExecutionContext,
     tracker: string,
@@ -17,6 +21,10 @@ export class DoubleLayerThrottlerGuard extends ThrottlerGuard {
   }
 
   protected async getTracker(req: Record<string, any>): Promise<string> {
-    return req.user?.id;
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('User não encontrado pro rate limit');
+    }
+    return userId;
   }
 }

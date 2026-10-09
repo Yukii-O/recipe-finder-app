@@ -51,20 +51,18 @@ export class RecipesService {
       const result = resultSpoonacularSchema.safeParse(data);
 
       if (!result.success) {
-        this.logger.error(
-          'Erro de validação no search',
-          JSON.stringify(z.treeifyError(result.error)),
-        );
+        this.logger.error('Erro de validação no search');
         throw new BadGatewayException({
           message: 'Erro na comunicação da proxy com API',
-          errors: z.treeifyError(result.error),
         });
       }
       return result.data; //com transform
     } catch (error) {
       if (error instanceof BadGatewayException) throw error;
-      if (error instanceof AxiosError && error.response?.status === 404)
-        this.logger.error('Erro inesperado no search', error);
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        throw new NotFoundException('Receita inexsitente');
+      }
+      this.logger.error('Erro inesperado no search', error);
       throw new BadGatewayException('Erro na comunicação da proxy com API');
     }
   }
@@ -85,12 +83,11 @@ export class RecipesService {
 
       if (!result.success) {
         this.logger.error(
-          `Erro de validação no getById: ${id}`,
+          `Erro de validação no getById`,
           JSON.stringify(z.treeifyError(result.error)),
         );
         throw new BadGatewayException({
           message: 'Erro na comunicação da proxy com API',
-          errors: z.treeifyError(result.error),
         });
       }
       return result.data;
@@ -99,7 +96,7 @@ export class RecipesService {
       if (error instanceof AxiosError && error.response?.status === 404) {
         throw new NotFoundException('Receita com este ID é inexistente');
       }
-      this.logger.error(`Erro inesperado no getById: ${id}`, error);
+      this.logger.error(`Erro inesperado no getById`, error);
       throw new BadGatewayException('Erro na comunicação da proxy com API');
     }
   }

@@ -4,7 +4,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EnvConfig, validateEnv } from './config/env.schema.js';
+import { type EnvConfig, validateEnv } from './config/env.schema.js';
 
 import { PrismaModule } from './prisma/prisma.module.js';
 import { UsersModule } from './users/users.module.js';
@@ -39,8 +39,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
           limit: 10,   //10 tentativas
         },*/
         {
-          name: config.get('THROTTLE_NAME', { infer: true }),
-          ttl: config.get('THROTTLE_TTL', { infer: true }),
+          name: 'userId',
+          ttl: config.get('THROTTLE_TTL_MS', { infer: true }),
           limit: config.get('THROTTLE_LIMIT', { infer: true }),
         },
       ],

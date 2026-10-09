@@ -7,8 +7,7 @@ export const envSchema = z.object({
   SPOONACULAR_API_KEY: z.string().min(1),
   OPENAI_API_KEY: z.string().optional(),
   PORT: z.coerce.number(),
-  THROTTLE_NAME: z.string(),
-  THROTTLE_TTL: z.coerce.number(),
+  THROTTLE_TTL_MS: z.coerce.number(),
   THROTTLE_LIMIT: z.coerce.number(),
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
