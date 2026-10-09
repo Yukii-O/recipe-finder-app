@@ -8,7 +8,7 @@ export const resultSpoonacularSchema = z.object({
       image: z.url(),
       //.refine((file) => file <= 10 * 1000 * 1024)
       //.refine((file) => file.type === 'image/jpg'), //possivel opcional
-      imageType: z.string().refine((file) => file === 'jpg'),
+      imageType: z.enum(['jpg', 'png', 'webp']),
     }),
   ),
   offset: z.coerce.number().min(0),
@@ -24,22 +24,10 @@ export const recipeSchema = z.object({
   readyInMinutes: z.coerce.number(),
   servings: z.coerce.number(),
   sourceUrl: z.url(),
-  vegetarian: z.boolean(),
-  vegan: z.boolean(),
-  glutenFree: z.boolean(),
-  dairyFree: z.boolean(),
-  veryHealthy: z.boolean(),
-  cheap: z.boolean(),
-  veryPopular: z.boolean(),
-  sustainable: z.boolean(),
-  lowFodmap: z.boolean(),
-  weightWatcherSmartPoints: z.coerce.number(),
-  gaps: z.enum(['no', 'yes']),
   preparationMinutes: z.number().nullable(),
   cookingMinutes: z.number().nullable(),
   aggregateLikes: z.coerce.number(),
   healthScore: z.coerce.number(),
-  creditsText: z.string(),
   license: z.string().nullable().optional(),
   sourceName: z.string(),
   pricePerServing: z.coerce.number(),
@@ -58,8 +46,10 @@ export const recipeSchema = z.object({
   cuisines: z.array(z.string()),
   dishTypes: z.array(z.string()),
   diets: z.array(z.string()),
-  instructions: z.string(),
+  instructions: z.string().nullable().optional(),
 });
+
+export const idSchema = z.coerce.number().positive().int();
 
 export type ResultSpoonacularDto = z.infer<typeof resultSpoonacularSchema>;
 export type RecipeDto = z.infer<typeof recipeSchema>;
