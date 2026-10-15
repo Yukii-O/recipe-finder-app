@@ -3,41 +3,35 @@ import { z } from 'zod';
 export const resultSpoonacularSchema = z.object({
   results: z.array(
     z.object({
-      id: z.coerce.number().min(1),
-      title: z.string().min(1).max(100),
+      id: z.number().min(1),
+      title: z.string().min(1),
       image: z.url(),
       //.refine((file) => file <= 10 * 1000 * 1024)
       //.refine((file) => file.type === 'image/jpg'), //possivel opcional
       imageType: z.enum(['jpg', 'png', 'webp']),
     }),
   ),
-  offset: z.coerce.number().min(0),
-  number: z.coerce.number().min(1),
-  totalResults: z.coerce.number(),
+  offset: z.number().min(0),
+  number: z.number().min(1),
+  totalResults: z.number(),
 });
 
 export const recipeSchema = z.object({
-  id: z.coerce.number().min(1),
+  id: z.number().min(1),
   image: z.url(),
-  imageType: z.enum(['jpg', 'png', 'webp']),
   title: z.string(),
-  readyInMinutes: z.coerce.number(),
-  servings: z.coerce.number(),
+  readyInMinutes: z.number(),
+  servings: z.number(),
   sourceUrl: z.url(),
-  preparationMinutes: z.number().nullable(),
-  cookingMinutes: z.number().nullable(),
-  aggregateLikes: z.coerce.number(),
-  healthScore: z.coerce.number(),
-  license: z.string().nullable().optional(),
-  sourceName: z.string(),
-  pricePerServing: z.coerce.number(),
+  preparationMinutes: z.number().nullable().optional(),
+  cookingMinutes: z.number().nullable().optional(),
 
   extendedIngredients: z.array(
     z.object({
-      id: z.coerce.number(),
+      id: z.number(),
       image: z.string(),
       name: z.string(),
-      amount: z.coerce.number(),
+      amount: z.number(),
       unit: z.string(),
     }),
   ),
