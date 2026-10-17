@@ -5,6 +5,7 @@ import {
   Logger,
   ServiceUnavailableException,
   GatewayTimeoutException,
+  Inject,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
@@ -19,6 +20,8 @@ import {
 } from './schemas/spoonacular.schema.js';
 import type { EnvConfig } from '../config/env.schema.js';
 import { z } from 'zod';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class RecipesService {
@@ -27,6 +30,7 @@ export class RecipesService {
   constructor(
     private readonly context: HttpService,
     private readonly configService: ConfigService<EnvConfig, true>,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   async search(

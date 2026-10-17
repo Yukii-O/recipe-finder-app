@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule /*, ObserveInstrument*/ } from './app.module.js';
+import { ConfigService } from '@nestjs/config';
+import { type EnvConfig } from './config/env.schema.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -7,6 +9,11 @@ async function bootstrap() {
     instrument: ObserveInstrument,
   }*/,
   );
-  await app.listen(process.env.PORT ?? 3000); //mudar futuramente pro zod validar aqui tbm. pois tá pegando direto
+  app.enableShutdownHooks();
+
+  const configService = app.get(ConfigService<EnvConfig, true>);
+  const port = configService.get('PORT', { infer: true });
+
+  await app.listen(port);
 }
 await bootstrap();

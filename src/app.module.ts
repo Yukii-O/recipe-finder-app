@@ -34,10 +34,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService<EnvConfig, true>) => [
-        /*{ name: 'ExternalIp',
-          ttl: 600000, //10 minutos
-          limit: 10,   //10 tentativas
-        },*/
         {
           name: 'userId',
           ttl: config.get('THROTTLE_TTL_MS', { infer: true }),
