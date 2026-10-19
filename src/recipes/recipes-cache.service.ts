@@ -45,7 +45,6 @@ export class RecipesCacheService {
   }
 
   async write(key: string, value: unknown, type: CacheType): Promise<void> {
-    //adicionar ttl maior para consultas de detail, pois raramente mudam. so nao sei se essa abordagem faz sentido, caso eu use ela para mais coisas como IA. ou faz?
     try {
       const ttl = type === 'detail' ? this.ttlDetail : this.ttlSearch; //nota: search ta como padrao no module
       await this.cacheManager.set(key, value, ttl);
