@@ -29,7 +29,18 @@ export const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   THROTTLE_TTL_MS: z.coerce.number().positive().int(),
   THROTTLE_LIMIT: z.coerce.number().positive().int(),
-  CACHE_TTL_MS: z.coerce.number().positive().int().max(3600000).default(600000),
+  CACHE_SEARCH_TTL_MS: z.coerce
+    .number()
+    .positive()
+    .int()
+    .max(3600000)
+    .default(600000),
+  CACHE_DETAIL_TTL_MS: z.coerce
+    .number()
+    .positive()
+    .int()
+    .max(3600000)
+    .default(1800000),
   CACHE_MAX: z.coerce.number().positive().int().max(1000).default(100),
   NODE_ENV: z
     .enum(['development', 'production', 'test'])

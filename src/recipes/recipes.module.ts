@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RecipesService } from './recipes.service.js';
 import { RecipesController } from './recipes.controller.js';
+import { RecipesCacheService } from './recipes-cache.service.js';
 import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from '../auth/auth.module.js';
 import { ConfigService } from '@nestjs/config';
@@ -20,7 +21,7 @@ import { KeyvCacheableMemory } from 'cacheable';
         stores: [
           new Keyv({
             store: new KeyvCacheableMemory({
-              ttl: config.get('CACHE_TTL_MS', { infer: true }),
+              ttl: config.get('CACHE_SEARCH_TTL_MS', { infer: true }), //padrao msm
               lruSize: config.get('CACHE_MAX', { infer: true }),
             }),
           }),
@@ -28,6 +29,6 @@ import { KeyvCacheableMemory } from 'cacheable';
       }),
     }),
   ],
-  providers: [RecipesService],
+  providers: [RecipesService, RecipesCacheService],
 })
 export class RecipesModule {}

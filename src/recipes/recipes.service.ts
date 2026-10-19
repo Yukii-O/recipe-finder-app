@@ -5,7 +5,6 @@ import {
   Logger,
   ServiceUnavailableException,
   GatewayTimeoutException,
-  Inject,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
@@ -20,8 +19,7 @@ import {
 } from './schemas/spoonacular.schema.js';
 import type { EnvConfig } from '../config/env.schema.js';
 import { z } from 'zod';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import type { Cache } from 'cache-manager';
+import { RecipesCacheService } from './recipes-cache.service.js';
 
 @Injectable()
 export class RecipesService {
@@ -30,13 +28,17 @@ export class RecipesService {
   constructor(
     private readonly context: HttpService,
     private readonly configService: ConfigService<EnvConfig, true>,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly recipesCacheService: RecipesCacheService,
   ) {}
 
-  async search(
-    searchRecipes: SearchRecipesDto,
-  ): Promise<ResultSpoonacularDto> /*| Promise<Observable<any>>*/ {
-    //nota: { data } desestrutura o http e pega só o .data dele
+  async search(searchRecipes: SearchRecipesDto): Promise<ResultSpoonacularDto> {
+    const key = this.recipesCacheService.keyForSearch(searchRecipes);
+    const hitCache =
+      await this.recipesCacheService.read<ResultSpoonacularDto>(key); //fora do try pq cache miss nao é erro e os erros nao entram no handle
+    if (hitCache !== undefined) {
+      return hitCache;
+    }
+
     try {
       const apiKey = this.configService.get('SPOONACULAR_API_KEY', {
         infer: true,
@@ -65,13 +67,22 @@ export class RecipesService {
           message: 'Erro na comunicação da proxy com API',
         });
       }
-      return result.data; //com transform
+
+      await this.recipesCacheService.write(key, result.data, 'search');
+      return result.data;
     } catch (error) {
       this.handleError(error, `search`);
     }
   }
 
   async getById(id: number): Promise<RecipeDto> {
+    const key = this.recipesCacheService.keyForRecipe(id);
+
+    const hitCache = await this.recipesCacheService.read<RecipeDto>(key);
+    if (hitCache !== undefined) {
+      return hitCache;
+    }
+
     try {
       const apiKey = this.configService.get('SPOONACULAR_API_KEY', {
         infer: true,
@@ -93,6 +104,7 @@ export class RecipesService {
           message: 'Erro na comunicação da proxy com API',
         });
       }
+      await this.recipesCacheService.write(key, result.data, 'detail');
       return result.data;
     } catch (error) {
       this.handleError(error, `getById: ${id}`);
@@ -124,7 +136,7 @@ export class RecipesService {
         this.rateLimitIssues.includes(error.response?.status)
       ) {
         this.logger.warn(
-          `Ou cota esgotada, ou Too Many Requests, ou Payment Required. Status: ${error.response?.status}`,
+          `Em ${context}, ou cota esgotada, ou Too Many Requests, ou Payment Required. Status: ${error.response?.status}`,
         );
         throw new ServiceUnavailableException(
           'Serviço indisponível temporariamente',
