@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RecipesService } from './recipes.service.js';
 import { RecipesController } from './recipes.controller.js';
-import { RecipesCacheService } from './recipes-cache.service.js';
+import { RecipesCacheService } from './cache/recipes-cache.service.js';
 import { HttpModule } from '@nestjs/axios';
 import { AuthModule } from '../auth/auth.module.js';
 import { ConfigService } from '@nestjs/config';

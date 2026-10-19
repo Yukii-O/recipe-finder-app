@@ -41,7 +41,14 @@ export const envSchema = z.object({
     .int()
     .max(3600000)
     .default(1800000),
+  CACHE_DETAIL_NOT_FOUND_TTL_MS: z.coerce
+    .number()
+    .positive()
+    .int()
+    .max(300000)
+    .default(150000),
   CACHE_MAX: z.coerce.number().positive().int().max(1000).default(100),
+
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),

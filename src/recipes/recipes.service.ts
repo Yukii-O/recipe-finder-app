@@ -19,7 +19,7 @@ import {
 } from './schemas/spoonacular.schema.js';
 import type { EnvConfig } from '../config/env.schema.js';
 import { z } from 'zod';
-import { RecipesCacheService } from './recipes-cache.service.js';
+import { RecipesCacheService } from './cache/recipes-cache.service.js';
 
 @Injectable()
 export class RecipesService {
@@ -35,8 +35,8 @@ export class RecipesService {
     const key = this.recipesCacheService.keyForSearch(searchRecipes);
     const hitCache =
       await this.recipesCacheService.read<ResultSpoonacularDto>(key); //fora do try pq cache miss nao é erro e os erros nao entram no handle
-    if (hitCache !== undefined) {
-      return hitCache;
+    if (hitCache.status === 'hit') {
+      return hitCache.data;
     }
 
     try {
@@ -78,9 +78,11 @@ export class RecipesService {
   async getById(id: number): Promise<RecipeDto> {
     const key = this.recipesCacheService.keyForRecipe(id);
 
-    const hitCache = await this.recipesCacheService.read<RecipeDto>(key);
-    if (hitCache !== undefined) {
-      return hitCache;
+    const hitCache = await this.recipesCacheService.read<RecipeDto>(key); //negative cache pra 404
+    if (hitCache.status === 'notFound')
+      throw new NotFoundException('Receita com este ID é inexistente'); //caso dê cache hit em id inexistente
+    if (hitCache.status === 'hit') {
+      return hitCache.data;
     }
 
     try {
@@ -107,12 +109,20 @@ export class RecipesService {
       await this.recipesCacheService.write(key, result.data, 'detail');
       return result.data;
     } catch (error) {
-      this.handleError(error, `getById: ${id}`);
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        await this.recipesCacheService.writeNotFound(key);
+      }
+      this.handleError(error, `getById: ${id}`, { isDetail: true });
     }
   }
 
-  private handleError(error: unknown, context: string): never {
+  private handleError(
+    error: unknown,
+    context: string,
+    options: { isDetail?: boolean } = { isDetail: false },
+  ): never {
     if (error instanceof BadGatewayException) {
+      //caso erro ja tenha sido tratado
       throw error;
     }
 
@@ -127,7 +137,7 @@ export class RecipesService {
         );
       }
 
-      if (error.response?.status === 404 && context !== 'search') {
+      if (error.response?.status === 404 && options.isDetail) {
         throw new NotFoundException('Receita com este ID é inexistente');
       }
 
