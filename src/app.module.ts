@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { RecipesModule } from './recipes/recipes.module.js';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { FavoritesModule } from './favorites/favorites.module.js';
 
 //export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -41,6 +42,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         },
       ],
     }),
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

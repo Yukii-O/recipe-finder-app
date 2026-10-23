@@ -43,7 +43,5 @@ export const recipeSchema = z.object({
   instructions: z.string().nullable().optional(),
 });
 
-export const idSchema = z.coerce.number().positive().int().max(2147483647);
-
 export type ResultSpoonacularDto = z.infer<typeof resultSpoonacularSchema>;
 export type RecipeDto = z.infer<typeof recipeSchema>;

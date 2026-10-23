@@ -4,7 +4,7 @@ import {
   searchRecipesSchema,
   type SearchRecipesDto,
 } from './dto/search-recipes.dto.js';
-import { idSchema } from './schemas/spoonacular.schema.js';
+import { idSchema } from './dto/recipe-id.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe.js';
 import { ContextThrottlerGuard } from '../common/guards/throttler.guard.js';
