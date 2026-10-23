@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
   Param,
   Delete,
@@ -26,7 +25,7 @@ export class FavoritesController {
   ) {
     return id_user;
   }
-  @Post(':idRecipe')
+  @Post(':id_recipe')
   async create(
     @GetUser('id_user', new ZodValidationPipe(idUserSchema)) id_user: idUserDto,
     @Param('id_recipe', new ZodValidationPipe(idRecipeSchema))
@@ -42,7 +41,7 @@ export class FavoritesController {
     return this.favoritesService.findAll(id_user);
   }
 
-  @Get(':idRecipe')
+  @Get(':id_recipe')
   async findOne(
     @GetUser('id_user', new ZodValidationPipe(idUserSchema)) id_user: idUserDto,
     @Param('id_recipe', new ZodValidationPipe(idRecipeSchema))
@@ -51,12 +50,12 @@ export class FavoritesController {
     return this.favoritesService.findOne(id_user, id_recipe);
   }
 
-  /*@Patch(':idRecipe')
+  /*@Patch(':id_recipe')
   async update(@GetUser('id_user', new ZodValidationPipe(idUserSchema)) id_user: idUserDto, @Param('id_recipe', new ZodValidationPipe(idRecipeSchema)) id_recipe: idRecipeDto) {
     return this.favoritesService.update(id_user, id_recipe);
   }*/
 
-  @Delete(':idRecipe')
+  @Delete(':id_recipe')
   async remove(
     @GetUser('id_user', new ZodValidationPipe(idUserSchema)) id_user: idUserDto,
     @Param('id_recipe', new ZodValidationPipe(idRecipeSchema))
